@@ -173,8 +173,9 @@ const AdminDashboard = () => {
             </div>
 
             {/* FILTER + BAR + PIE */}
-            <div className="chart-row">
-                <div className="filter-card">
+            <div>
+            <div className="kpi-grid">
+                <div className="kpi-card">
                     <h5>Filters</h5>
                     <label>
                         <input
@@ -197,7 +198,9 @@ const AdminDashboard = () => {
                         Rejected
                     </label>
                 </div>
+                </div>
 
+                <div className="kpi-grid">
                 <div className="chart-card">
                     <h5>Approval Distribution</h5>
                     <ResponsiveContainer width="100%" height={260}>
@@ -239,30 +242,7 @@ const AdminDashboard = () => {
                     </ResponsiveContainer>
                 </div>
             </div>
-
-            {/* INSIGHTS */}
-            {[["Risk", riskInsight], ["Vehicle", vehicleInsight], ["Income", incomeInsight]].map(
-                ([title, data], i) => (
-                    <div className="chart-card" key={i}>
-                        <h5>{title} vs Approval</h5>
-                        <ResponsiveContainer width="100%" height={300}>
-                            <BarChart data={data}>
-                                <XAxis dataKey="label" />
-                                <YAxis allowDecimals={false} />
-                                <Tooltip />
-                                <Bar
-                                    dataKey="Approved"
-                                    fill={COLORS.Approved}
-                                />
-                                <Bar
-                                    dataKey="Rejected"
-                                    fill={COLORS.Rejected}
-                                />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                )
-            )}
+            </div>
 
             {/* TABLE */}
             <div className="table-card">

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
     BarChart, Bar,
     XAxis, YAxis,
@@ -8,9 +9,8 @@ import {
 } from "recharts";
 import "../styles/dashboard.css";
 
-
 /* =========================
-   GITHUB RAW DATA
+   DATA SOURCE
 ========================= */
 const DATA_URL =
     "https://raw.githubusercontent.com/Surya-461/users/main/users.json";
@@ -26,6 +26,13 @@ const COLORS = {
     gray: "#e5e7eb"
 };
 
+/* Donut colors for violations */
+const VIOLATION_COLORS = [
+    COLORS.red,
+    COLORS.orange,
+    COLORS.blue
+];
+
 /* =========================
    CREDIT SCORE GAUGE
 ========================= */
@@ -34,8 +41,6 @@ const CreditScoreGauge = ({ score }) => {
     const MAX = 850;
 
     const safeScore = Math.min(Math.max(score, MIN), MAX);
-
-    /* ✅ Correct angle mapping */
     const percent = (safeScore - MIN) / (MAX - MIN);
     const needleAngle = -90 + percent * 180;
 
@@ -47,8 +52,6 @@ const CreditScoreGauge = ({ score }) => {
 
     return (
         <div style={{ position: "relative", height: 260 }}>
-
-            {/* Gauge */}
             <ResponsiveContainer>
                 <PieChart>
                     <Pie
@@ -71,35 +74,30 @@ const CreditScoreGauge = ({ score }) => {
             <div
                 style={{
                     position: "absolute",
-                    bottom: 60,
+                    bottom: 128,
                     left: "50%",
                     width: 4,
-                    height: 90,
-                    background: "#111",
-                    borderRadius: 4,
+                    height: 80,
+                    background: "black",
                     transformOrigin: "bottom center",
                     transform: `translateX(-50%) rotate(${needleAngle}deg)`,
-                    transition: "transform 1s ease-out",
-                    zIndex: 10
+                    transition: "transform 1s ease-out"
                 }}
             />
 
-            {/* Needle Center */}
             <div
                 style={{
                     position: "absolute",
-                    bottom: 55,
+                    bottom: 120,
                     left: "50%",
                     width: 14,
                     height: 14,
-                    background: "#111",
+                    background: "black",
                     borderRadius: "50%",
-                    transform: "translateX(-50%)",
-                    zIndex: 11
+                    transform: "translateX(-50%)"
                 }}
             />
 
-            {/* Score */}
             <div
                 style={{
                     position: "absolute",
@@ -111,9 +109,6 @@ const CreditScoreGauge = ({ score }) => {
                 <h2>{safeScore}</h2>
                 <p style={{ color: "#6b7280" }}>Credit Score</p>
             </div>
-
-            <span style={{ position: "absolute", bottom: 10, left: 10 }}>300</span>
-            <span style={{ position: "absolute", bottom: 10, right: 10 }}>850</span>
         </div>
     );
 };
@@ -122,10 +117,31 @@ const CreditScoreGauge = ({ score }) => {
    USER DASHBOARD
 ========================= */
 const UserDashboard = () => {
-    const [users, setUsers] = useState([]);
-    const [selectedId, setSelectedId] = useState("All");
+    const navigate = useNavigate();
+    const { id: paramId } = useParams();
 
-    /* Fetch data */
+    const [users, setUsers] = useState([]);
+
+    /* =========================
+       AUTH GUARD
+    ========================= */
+    useEffect(() => {
+        const isAuth = localStorage.getItem("auth") === "true";
+        const role = localStorage.getItem("role");
+
+        if (!isAuth || role !== "user") {
+            navigate("/login", { replace: true });
+        }
+    }, []);
+
+    /* =========================
+       USER ID RESOLUTION
+    ========================= */
+    const userId = paramId || localStorage.getItem("dbId");
+
+    /* =========================
+       FETCH USERS
+    ========================= */
     useEffect(() => {
         fetch(DATA_URL)
             .then(res => res.json())
@@ -133,121 +149,185 @@ const UserDashboard = () => {
             .catch(err => console.error("FETCH ERROR:", err));
     }, []);
 
-    /* Selected user */
+    /* =========================
+       SELECT USER
+    ========================= */
     const selectedUser = useMemo(() => {
-        if (!users.length) return null;
-        if (selectedId === "All") return users[0];
-        return users.find(u => String(u.id) === selectedId);
-    }, [users, selectedId]);
+        if (!users.length || !userId) return null;
+        return users.find(u => String(u.id) === String(userId));
+    }, [users, userId]);
 
-    /* Derived values */
-    const creditScore = selectedUser?.credit_score || 0;
-    const vehicleType = selectedUser?.vehicle_type || "-";
-    const annualMileage = selectedUser?.annual_mileage || 0;
+    const isLoading = !selectedUser;
+
+    /* =========================
+       SAFE VALUES
+    ========================= */
+    const creditScore = selectedUser?.credit_score ?? 0;
+    const vehicleType = selectedUser?.vehicle_type ?? "-";
+    const annualMileage = selectedUser?.annual_mileage ?? 0;
 
     const riskLevel =
         creditScore >= 700 ? "LOW RISK" :
-            creditScore >= 550 ? "MEDIUM RISK" :
-                "HIGH RISK";
+        creditScore >= 550 ? "MEDIUM RISK" :
+        "HIGH RISK";
 
     const riskColor =
         creditScore >= 700 ? COLORS.green :
-            creditScore >= 550 ? COLORS.orange :
-                COLORS.red;
+        creditScore >= 550 ? COLORS.orange :
+        COLORS.red;
 
-    /* Violations */
-    const violationData = useMemo(() => ([
-        { name: "DUIs", value: selectedUser?.duis || 0 },
-        { name: "Accidents", value: selectedUser?.past_accidents || 0 },
-        { name: "Speeding", value: selectedUser?.speeding_violations || 0 }
-    ]), [selectedUser]);
+    /* =========================
+       DRIVING VIOLATIONS (DONUT)
+    ========================= */
+    const violationData = [
+        { name: "DUIs", value: selectedUser?.duis ?? 0 },
+        { name: "Accidents", value: selectedUser?.past_accidents ?? 0 },
+        { name: "Speeding", value: selectedUser?.speeding_violations ?? 0 }
+    ];
 
-    /* Mileage distribution */
-    const mileageData = useMemo(() => {
-        const map = {};
+    /* =========================
+       MILEAGE DISTRIBUTION
+    ========================= */
+    const mileageDistribution = useMemo(() => {
+        const dist = { Low: 0, Medium: 0, High: 0 };
+
         users.forEach(u => {
-            map[u.mileage_group] =
-                (map[u.mileage_group] || 0) + u.annual_mileage;
+            const miles = u.annual_mileage || 0;
+            if (miles < 8000) dist.Low++;
+            else if (miles <= 15000) dist.Medium++;
+            else dist.High++;
         });
-        return Object.entries(map).map(([k, v]) => ({
-            name: k,
-            value: Math.round(v)
-        }));
+
+        return [
+            { name: "Low", value: dist.Low },
+            { name: "Medium", value: dist.Medium },
+            { name: "High", value: dist.High }
+        ];
     }, [users]);
 
     return (
         <div className="dashboard-page">
-
             <div className="dashboard-header">
                 <h2>User Risk & Insurance Profile</h2>
-                <p>Personalized insurance risk analytics</p>
+                <p>User ID: <b>{userId}</b></p>
             </div>
 
-            <div className="filter-card">
-                <label>User ID</label>
-                <select value={selectedId} onChange={e => setSelectedId(e.target.value)}>
-                    <option value="All">All</option>
-                    {users.map(u => (
-                        <option key={u.id} value={u.id}>{u.id}</option>
-                    ))}
-                </select>
-            </div>
+            {isLoading ? (
+                <p style={{ textAlign: "center" }}>Loading user data...</p>
+            ) : (
+                <>
+                    {/* KPI CARDS */}
+                    <div className="kpi-grid">
+                        <div className="kpi-card">
+                            <span>VEHICLE TYPE</span>
+                            <h3>{vehicleType}</h3>
+                        </div>
 
-            <div className="kpi-grid">
-                <div className="kpi-card">
-                    <span>VEHICLE TYPE</span>
-                    <h3>{vehicleType}</h3>
-                </div>
+                        <div className="kpi-card success">
+                            <span>ANNUAL MILEAGE</span>
+                            <h3>{(annualMileage / 1000).toFixed(2)}K</h3>
+                        </div>
 
-                <div className="kpi-card success">
-                    <span>ANNUAL MILEAGE</span>
-                    <h3>{(annualMileage / 1000).toFixed(2)}K</h3>
-                </div>
+                        <div className="kpi-card">
+                            <span>CREDIT SCORE</span>
+                            <h3>{creditScore}</h3>
+                        </div>
 
-                <div className="kpi-card">
-                    <span>CREDIT SCORE</span>
-                    <h3>{creditScore}</h3>
-                </div>
+                        <div
+                            className="kpi-card"
+                            style={{ borderTop: `4px solid ${riskColor}` }}
+                        >
+                            <span>RISK LEVEL</span>
+                            <h3 style={{ color: riskColor }}>
+                                {riskLevel}
+                            </h3>
+                        </div>
+                    </div>
 
-                <div className="kpi-card" style={{ borderTop: `4px solid ${riskColor}` }}>
-                    <span>RISK LEVEL</span>
-                    <h3 style={{ color: riskColor }}>{riskLevel}</h3>
-                </div>
-            </div>
+                    {/* CHARTS ROW */}
+                    <div className="kpi-grid">
+                        <div className="kpi-card">
+                            <h5>Credit Score Health</h5>
+                            <CreditScoreGauge score={creditScore} />
+                        </div>
 
-            <div className="chart-row">
-                <div className="chart-card">
-                    <h5>Credit Score Health</h5>
-                    <CreditScoreGauge score={creditScore} />
-                </div>
+                        {/* DONUT CHART */}
+                        <div className="kpi-card">
+                            <h5>Driving Violations</h5>
 
-                <div className="chart-card">
-                    <h5>Driving Violations</h5>
-                    <ResponsiveContainer width="100%" height={260}>
-                        <BarChart data={violationData}>
-                            <XAxis dataKey="name" />
-                            <YAxis allowDecimals={false} />
-                            <Tooltip />
-                            <Bar dataKey="value" fill={COLORS.red} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
+                            <ResponsiveContainer width="100%" height={260}>
+                                <PieChart>
+                                    <Pie
+                                        data={violationData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        innerRadius={60}
+                                        outerRadius={100}
+                                        paddingAngle={3}
+                                    >
+                                        {violationData.map((_, index) => (
+                                            <Cell
+                                                key={index}
+                                                fill={VIOLATION_COLORS[index % VIOLATION_COLORS.length]}
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
 
-            <div className="chart-row">
-                <div className="chart-card">
-                    <h5>Annual Mileage Distribution</h5>
-                    <ResponsiveContainer width="100%" height={260}>
-                        <BarChart data={mileageData}>
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="value" fill={COLORS.blue} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
+                            {/* Legend */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    gap: 16,
+                                    marginTop: 8
+                                }}
+                            >
+                                {violationData.map((v, i) => (
+                                    <div
+                                        key={i}
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 6
+                                        }}
+                                    >
+                                        <span
+                                            style={{
+                                                width: 10,
+                                                height: 10,
+                                                borderRadius: "50%",
+                                                background: VIOLATION_COLORS[i]
+                                            }}
+                                        />
+                                        <span style={{ fontSize: "0.8rem" }}>
+                                            {v.name}: {v.value}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
 
+
+                    {/* MILEAGE DISTRIBUTION */}
+                    <div className="chart-row">
+                        <div className="chart-card">
+                            <h5>Annual Mileage Distribution</h5>
+                            <ResponsiveContainer width="100%" height={260}>
+                                <BarChart data={mileageDistribution}>
+                                    <XAxis dataKey="name" />
+                                    <YAxis allowDecimals={false} />
+                                    <Tooltip />
+                                    <Bar dataKey="value" fill={COLORS.blue} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

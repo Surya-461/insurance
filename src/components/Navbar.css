@@ -3,12 +3,11 @@
 /* ===================================================== */
 .fin-navbar {
     background: rgba(10, 14, 40, 0.95);
-    /* backdrop-filter: blur(12px); */
     z-index: 1000;
 }
 
 /* ===================================================== */
-/* BRAND (LOGO + TEXT) */
+/* BRAND */
 /* ===================================================== */
 .navbar-brand {
     display: flex;
@@ -17,14 +16,12 @@
     text-decoration: none;
 }
 
-/* Logo image (favicon-style) */
 .navbar-logo {
     width: 32px;
     height: 32px;
     object-fit: contain;
 }
 
-/* Brand text */
 .navbar-brand span {
     font-weight: 700;
     letter-spacing: 0.3px;
@@ -41,7 +38,7 @@
 }
 
 /* ===================================================== */
-/* ANIMATED UNDERLINE */
+/* UNDERLINE ANIMATION */
 /* ===================================================== */
 .nav-underline::after {
     content: "";
@@ -63,7 +60,7 @@
 /* BUTTONS */
 /* ===================================================== */
 .navbar .btn {
-    border-radius: 8px;
+    border-radius: 50px;
     font-weight: 500;
 }
 
@@ -104,7 +101,7 @@
 }
 
 /* ===================================================== */
-/* MOBILE OFFCANVAS MENU */
+/* OFFCANVAS */
 /* ===================================================== */
 .offcanvas {
     width: 260px;
@@ -124,7 +121,6 @@
 /* ===================================================== */
 body {
     padding-top: 72px;
-    /* navbar height */
 }
 
 /* ===================================================== */
@@ -139,4 +135,8 @@ body {
         width: 28px;
         height: 28px;
     }
+}
+
+.role-tag {
+    color: #ffffff;
 }

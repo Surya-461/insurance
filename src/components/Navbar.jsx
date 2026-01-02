@@ -1,12 +1,13 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
+import { Offcanvas } from "bootstrap";
 import logo from "../assets/logo.png";
 import "./Navbar.css";
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const location = useLocation(); // ✅ KEY FIX
+    const location = useLocation();
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -14,19 +15,18 @@ const Navbar = () => {
     const userEmail = localStorage.getItem("email");
     const role = localStorage.getItem("role"); // user | admin
 
-    /* 🔄 SYNC AUTH (same tab + other tabs) */
+    /* 🔄 SYNC AUTH */
     useEffect(() => {
         const syncAuth = () => {
             setIsLoggedIn(localStorage.getItem("auth") === "true");
         };
 
-        syncAuth(); // ✅ run immediately on route change
+        syncAuth();
         window.addEventListener("storage", syncAuth);
-
         return () => window.removeEventListener("storage", syncAuth);
-    }, [location.pathname]); // 🔥 triggers after login redirect
+    }, [location.pathname]);
 
-    /* 🚪 Logout */
+    /* 🚪 LOGOUT */
     const handleLogout = () => {
         localStorage.clear();
         setIsLoggedIn(false);
@@ -34,7 +34,23 @@ const Navbar = () => {
         navigate("/login");
     };
 
-    /* 📌 Dashboard path by role */
+    /* 📱 NAVIGATE + CLOSE OFFCANVAS (🔥 FIX) */
+    const navigateAndClose = (path) => {
+        navigate(path); // navigate first
+
+        setTimeout(() => {
+            const offcanvasEl = document.getElementById("mobileMenu");
+            if (!offcanvasEl) return;
+
+            const instance =
+                Offcanvas.getInstance(offcanvasEl) ||
+                new Offcanvas(offcanvasEl);
+
+            instance.hide();
+        }, 100);
+    };
+
+    /* 📌 DASHBOARD PATH */
     const dashboardPath =
         role === "admin" ? "/admin-dashboard" : "/user-dashboard";
 
@@ -53,7 +69,6 @@ const Navbar = () => {
                             src={logo}
                             alt="FinDrive Analytics Logo"
                             className="navbar-logo"
-                            height={90}
                         />
                         <span className="text-info fs-4 fw-bold">
                             FinDrive Analytics
@@ -72,10 +87,7 @@ const Navbar = () => {
 
                     {/* DESKTOP MENU */}
                     <div className="collapse navbar-collapse d-none d-lg-flex">
-
-                        {/* CENTER LINKS */}
                         <ul className="navbar-nav mx-auto gap-lg-4">
-
                             {[
                                 { path: "/", label: "Home" },
                                 { path: "/about", label: "About" },
@@ -94,7 +106,6 @@ const Navbar = () => {
                                 </li>
                             ))}
 
-                            {/* DASHBOARD */}
                             {isLoggedIn && (
                                 <li className="nav-item">
                                     <NavLink
@@ -111,28 +122,15 @@ const Navbar = () => {
                             )}
                         </ul>
 
-                        {/* RIGHT ACTIONS */}
                         <div className="d-flex align-items-center gap-3">
-
-                            {/* 🔐 NOT LOGGED IN */}
                             {!isLoggedIn ? (
-                                <>
-                                    <NavLink
-                                        to="/login"
-                                        className="btn btn-outline-light px-4"
-                                    >
-                                        Login
-                                    </NavLink>
-
-                                    <NavLink
-                                        to="/signup"
-                                        className="btn btn-info text-dark fw-semibold px-4"
-                                    >
-                                        Get Started
-                                    </NavLink>
-                                </>
+                                <NavLink
+                                    to="/login"
+                                    className="btn btn-outline-light px-4"
+                                >
+                                    Login
+                                </NavLink>
                             ) : (
-                                /* 👤 LOGGED IN */
                                 <div className="position-relative">
                                     <FaUserCircle
                                         className="user-icon"
@@ -144,13 +142,11 @@ const Navbar = () => {
                                     {showProfile && (
                                         <div className="profile-dropdown">
                                             <p className="email">
-                                                {userEmail || "Logged in user"}
+                                                {userEmail || ""}
                                             </p>
-
                                             <p className="role-tag">
                                                 Role: {role}
                                             </p>
-
                                             <button
                                                 className="btn btn-sm btn-outline-danger w-100"
                                                 onClick={handleLogout}
@@ -167,10 +163,7 @@ const Navbar = () => {
             </nav>
 
             {/* ================= MOBILE OFFCANVAS ================= */}
-            <div
-                className="offcanvas offcanvas-start text-bg-dark"
-                id="mobileMenu"
-            >
+            <div className="offcanvas offcanvas-start text-bg-dark" id="mobileMenu">
                 <div className="offcanvas-header">
                     <h5 className="offcanvas-title text-info fw-bold">
                         FinDrive Analytics
@@ -182,59 +175,63 @@ const Navbar = () => {
                 </div>
 
                 <div className="offcanvas-body">
-                    <ul className="navbar-nav gap-3 text-center">
+                    <ul className="navbar-nav gap-4 text-center">
 
-                        {["/", "/about", "/contact"].map((path, i) => (
-                            <li key={i}>
-                                <NavLink
-                                    className="nav-link"
-                                    to={path}
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    {path === "/" ? "Home" : path.slice(1)}
-                                </NavLink>
-                            </li>
-                        ))}
+                        <li>
+                            <button
+                                className="nav-link btn btn-link text-light w-100"
+                                onClick={() => navigateAndClose("/")}
+                            >
+                                Home
+                            </button>
+                        </li>
+
+                        <li>
+                            <button
+                                className="nav-link btn btn-link text-light w-100"
+                                onClick={() => navigateAndClose("/about")}
+                            >
+                                About
+                            </button>
+                        </li>
+
+                        <li>
+                            <button
+                                className="nav-link btn btn-link text-light w-100"
+                                onClick={() => navigateAndClose("/contact")}
+                            >
+                                Contact
+                            </button>
+                        </li>
 
                         {isLoggedIn && (
                             <li>
-                                <NavLink
-                                    className="nav-link fw-semibold"
-                                    to={dashboardPath}
-                                    data-bs-dismiss="offcanvas"
+                                <button
+                                    className="nav-link btn btn-link fw-semibold text-light w-100"
+                                    onClick={() =>
+                                        navigateAndClose(dashboardPath)
+                                    }
                                 >
-                                    {role === "admin"
-                                        ? "Admin Dashboard"
-                                        : "Dashboard"}
-                                </NavLink>
+                                    Dashboard
+                                </button>
                             </li>
                         )}
 
                         <hr />
 
                         {!isLoggedIn ? (
-                            <>
-                                <NavLink
-                                    to="/login"
-                                    className="btn btn-outline-light w-100"
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    Login
-                                </NavLink>
-
-                                <NavLink
-                                    to="/signup"
-                                    className="btn btn-info text-dark fw-semibold w-100 mt-2"
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    Get Started
-                                </NavLink>
-                            </>
+                            <button
+                                className="btn btn-outline-light w-100"
+                                onClick={() => navigateAndClose("/login")}
+                            >
+                                Login
+                            </button>
                         ) : (
                             <button
                                 className="btn btn-danger w-100"
-                                onClick={handleLogout}
-                                data-bs-dismiss="offcanvas"
+                                onClick={() => {
+                                    handleLogout();
+                                }}
                             >
                                 Logout
                             </button>
