@@ -2,6 +2,69 @@
 import "./Home.css";
 
 const Home = () => {
+    const modules = [
+        {
+            title: "📑 Claim Processing Analytics",
+            imgClass: "bg-claims",
+            link: "https://www.ibm.com/analytics/claims-management",
+            points: [
+                "Total claims received vs settled",
+                "Average claim processing time",
+                "Pending & rejected claims analysis"
+            ]
+        },
+        {
+            title: "🚨 Fraud Detection Insights",
+            imgClass: "bg-fraud",
+            link: "https://www.sas.com/en_in/home.html",
+            points: [
+                "Suspicious claim identification",
+                "High-risk customer profiling",
+                "Duplicate & abnormal claims detection"
+            ]
+        },
+        {
+            title: "💰 Settlement & Payout Analysis",
+            imgClass: "bg-settlement",
+            link: "https://www.mckinsey.com/industries/financial-services/our-insights",
+            points: [
+                "Approved vs paid claim amounts",
+                "Settlement turnaround tracking",
+                "Loss ratio monitoring"
+            ]
+        },
+        {
+            title: "🌍 Regional Claim Performance",
+            imgClass: "bg-region",
+            link: "https://docs.oracle.com/en/industries/financial-services/ofs-analytical-applications/insurance-performance-insight-for-general-insurance/81200/ipigi/claim-performance-summary-tab.html",
+            points: [
+                "Region-wise claim volume",
+                "Branch-level performance",
+                "Urban vs rural claim trends"
+            ]
+        },
+        {
+            title: "📊 Policy & Risk Analytics",
+            imgClass: "bg-risk",
+            link: "https://www.tableau.com/solutions/industries/financial-services/insurance",
+            points: [
+                "Policy-wise claim frequency",
+                "Risk exposure analysis",
+                "Premium vs claims ratio"
+            ]
+        },
+        {
+            title: "📈 Forecasting & Trends",
+            imgClass: "bg-forecast",
+            link: "https://explodingtopics.com/blog/trend-forecasting",
+            points: [
+                "Future claim volume prediction",
+                "Seasonal claim patterns",
+                "Cost optimization insights"
+            ]
+        }
+    ];
+
     return (
         <div className="home-page">
 
@@ -16,7 +79,7 @@ const Home = () => {
                             </p>
 
                             <h1 className="home-hero-title">
-                                Insurance Claim
+                                Insurance Claim{" "}
                                 <span className="home-hero-highlight">
                                     Analytics Platform
                                 </span>
@@ -36,8 +99,9 @@ const Home = () => {
                                     Request Demo
                                 </a>
                             </div>
+
                             {/* ================= STATS ================= */}
-                            <div className="home-stats reveal reveal-delay-4">
+                            <div className="home-stats">
                                 <div className="stat-item">
                                     <h3>99.9%</h3>
                                     <p>Uptime</p>
@@ -72,64 +136,13 @@ const Home = () => {
 
                     <div className="row g-4">
 
-                        {[
-                            {
-                                title: "📑 Claim Processing Analytics",
-                                imgClass: "bg-claims",
-                                points: [
-                                    "Total claims received vs settled",
-                                    "Average claim processing time",
-                                    "Pending & rejected claims analysis"
-                                ]
-                            },
-                            {
-                                title: "🚨 Fraud Detection Insights",
-                                imgClass: "bg-fraud",
-                                points: [
-                                    "Suspicious claim identification",
-                                    "High-risk customer profiling",
-                                    "Duplicate & abnormal claims detection"
-                                ]
-                            },
-                            {
-                                title: "💰 Settlement & Payout Analysis",
-                                imgClass: "bg-settlement",
-                                points: [
-                                    "Approved vs paid claim amounts",
-                                    "Settlement turnaround tracking",
-                                    "Loss ratio monitoring"
-                                ]
-                            },
-                            {
-                                title: "🌍 Regional Claim Performance",
-                                imgClass: "bg-region",
-                                points: [
-                                    "Region-wise claim volume",
-                                    "Branch-level performance",
-                                    "Urban vs rural claim trends"
-                                ]
-                            },
-                            {
-                                title: "📊 Policy & Risk Analytics",
-                                imgClass: "bg-risk",
-                                points: [
-                                    "Policy-wise claim frequency",
-                                    "Risk exposure analysis",
-                                    "Premium vs claims ratio"
-                                ]
-                            },
-                            {
-                                title: "📈 Forecasting & Trends",
-                                imgClass: "bg-forecast",
-                                points: [
-                                    "Future claim volume prediction",
-                                    "Seasonal claim patterns",
-                                    "Cost optimization insights"
-                                ]
-                            }
-                        ].map((item, index) => (
+                        {modules.map((item, index) => (
                             <div className="col-md-6 col-lg-4" key={index}>
-                                <div className={`home-module-card ${item.imgClass}`}>
+                                <div
+                                    className={`home-module-card ${item.imgClass}`}
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => window.open(item.link, "_blank")}
+                                >
                                     <div className="overlay">
                                         <h5>{item.title}</h5>
                                         <ul>
@@ -137,8 +150,15 @@ const Home = () => {
                                                 <li key={i}>{p}</li>
                                             ))}
                                         </ul>
-                                        <button className="btn btn-outline-light btn-sm">
-                                            View Dashboard
+
+                                        <button
+                                            className="btn btn-outline-light btn-sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                window.open(item.link, "_blank");
+                                            }}
+                                        >
+                                            View Dashboard →
                                         </button>
                                     </div>
                                 </div>
@@ -171,18 +191,10 @@ const Home = () => {
                             <div className="home-form-card">
                                 <h5>Demo Request Form</h5>
 
-                                <input
-                                    className="form-control"
-                                    placeholder="Full Name"
-                                />
-                                <input
-                                    className="form-control"
-                                    placeholder="Official Email"
-                                />
-                                <input
-                                    className="form-control"
-                                    placeholder="Insurance Company Name"
-                                />
+                                <input className="form-control" placeholder="Full Name" />
+                                <input className="form-control" placeholder="Official Email" />
+                                <input className="form-control" placeholder="Insurance Company Name" />
+
                                 <select className="form-control">
                                     <option>Select Role</option>
                                     <option>Claims Manager</option>
@@ -190,6 +202,7 @@ const Home = () => {
                                     <option>Insurance Officer</option>
                                     <option>Student / Learner</option>
                                 </select>
+
                                 <textarea
                                     className="form-control"
                                     placeholder="What insights are you looking for?"

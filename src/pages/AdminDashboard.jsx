@@ -154,94 +154,95 @@ const AdminDashboard = () => {
             <div className="kpi-grid">
                 <div className="kpi-card">
                     <span>Total Applications</span>
-                    <h3>{filteredUsers.length}</h3>
+                    <h3 className="kpi-update">{filteredUsers.length}</h3>
                 </div>
 
                 <div className="kpi-card success">
                     <span>
-                        Approved {trendArrow(approvedCount, prevStats.approved)}
+                        Approved
                     </span>
-                    <h3>{approvedCount}</h3>
+                    <h3 className="kpi-update">{approvedCount}</h3>
                 </div>
 
                 <div className="kpi-card danger">
                     <span>
-                        Rejected {trendArrow(rejectedCount, prevStats.rejected)}
+                        Rejected
                     </span>
-                    <h3>{rejectedCount}</h3>
+                    <h3 className="kpi-update">{rejectedCount}</h3>
+
                 </div>
             </div>
 
             {/* FILTER + BAR + PIE */}
             <div>
-            <div className="kpi-grid">
-                <div className="kpi-card">
-                    <h5>Filters</h5>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={showApproved}
-                            onChange={() =>
-                                setShowApproved(!showApproved)
-                            }
-                        />
-                        Approved
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={showRejected}
-                            onChange={() =>
-                                setShowRejected(!showRejected)
-                            }
-                        />
-                        Rejected
-                    </label>
-                </div>
+                <div className="kpi-grid">
+                    <div className="kpi-card">
+                        <h5>Filters</h5>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={showApproved}
+                                onChange={() =>
+                                    setShowApproved(!showApproved)
+                                }
+                            />
+                            Approved
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={showRejected}
+                                onChange={() =>
+                                    setShowRejected(!showRejected)
+                                }
+                            />
+                            Rejected
+                        </label>
+                    </div>
                 </div>
 
                 <div className="kpi-grid">
-                <div className="chart-card">
-                    <h5>Approval Distribution</h5>
-                    <ResponsiveContainer width="100%" height={260}>
-                        <BarChart data={approvalData}>
-                            <XAxis dataKey="name" />
-                            <YAxis allowDecimals={false} />
-                            <Tooltip />
-                            <Bar dataKey="value">
-                                {approvalData.map((e, i) => (
-                                    <Cell
-                                        key={i}
-                                        fill={COLORS[e.name]}
-                                    />
-                                ))}
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
+                    <div className="chart-card">
+                        <h5>Approval Distribution</h5>
+                        <ResponsiveContainer width="100%" height={260}>
+                            <BarChart data={approvalData}>
+                                <XAxis dataKey="name" />
+                                <YAxis allowDecimals={false} />
+                                <Tooltip />
+                                <Bar dataKey="value">
+                                    {approvalData.map((e, i) => (
+                                        <Cell
+                                            key={i}
+                                            fill={COLORS[e.name]}
+                                        />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
 
-                <div className="chart-card">
-                    <h5>Status Share</h5>
-                    <ResponsiveContainer width="100%" height={260}>
-                        <PieChart>
-                            <Pie
-                                data={approvalData}
-                                dataKey="value"
-                                nameKey="name"
-                                label
-                            >
-                                {approvalData.map((e, i) => (
-                                    <Cell
-                                        key={i}
-                                        fill={COLORS[e.name]}
-                                    />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                        </PieChart>
-                    </ResponsiveContainer>
+                    <div className="chart-card">
+                        <h5>Status Share</h5>
+                        <ResponsiveContainer width="100%" height={260}>
+                            <PieChart>
+                                <Pie
+                                    data={approvalData}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    label
+                                >
+                                    {approvalData.map((e, i) => (
+                                        <Cell
+                                            key={i}
+                                            fill={COLORS[e.name]}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
-            </div>
             </div>
 
             {/* TABLE */}
@@ -296,4 +297,4 @@ const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default AdminDashboard; 

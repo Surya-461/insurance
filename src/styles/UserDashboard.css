@@ -1,0 +1,121 @@
+.dashboard-page {
+    padding: 24px;
+    background: linear-gradient(135deg, #eef2ff, #fdfcff);
+    min-height: 100vh;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-header h2 {
+    font-size: 1.8rem;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.kpi-card {
+    padding: 18px;
+    border-radius: 14px;
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+}
+
+.violation-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.gradient-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.gradient-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.gradient-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+
+.profile-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.profile-table th,
+.profile-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.profile-table th {
+    background: #f8fafc;
+}
+
+.gauge-wrapper {
+    position: relative;
+    height: 260px;
+}
+
+.gauge-needle {
+    position: absolute;
+    bottom: 128px;
+    left: 50%;
+    width: 4px;
+    height: 80px;
+    background: #000;
+    transform-origin: bottom center;
+    transition: transform 1s ease-out;
+}
+
+.gauge-center {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: #000;
+    border-radius: 50%;
+    transform: translateX(-50%);
+}
+
+.gauge-score {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+}
+
+.loading-text {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+}
+
+.dashboard-header h2 {
+    color: #000;
+    font-weight: 700;
+}
+
+.dashboard-header p {
+    color: #111;
+}

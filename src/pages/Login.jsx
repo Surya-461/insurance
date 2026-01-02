@@ -35,7 +35,7 @@ const Login = () => {
 
     const handleLogin = () => {
         /* =========================
-           ADMIN LOGIN
+            ADMIN LOGIN
         ========================= */
         if (email === ADMIN.email && password === ADMIN.password) {
             localStorage.setItem("auth", "true");
@@ -46,7 +46,7 @@ const Login = () => {
         }
 
         /* =========================
-           USER LOGIN
+            USER LOGIN
         ========================= */
         const matchedUser = USERS.find(
             (u) => u.email === email && u.password === password
@@ -55,7 +55,7 @@ const Login = () => {
         if (matchedUser) {
             localStorage.setItem("auth", "true");
             localStorage.setItem("role", "user");
-            localStorage.setItem("userId", matchedUser.id);
+            localStorage.setItem("dbId", matchedUser.id);
 
             navigate(`/user-dashboard/${matchedUser.id}`);
             return;

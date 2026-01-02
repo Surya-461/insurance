@@ -8,6 +8,7 @@ import {
     PieChart, Pie, Cell
 } from "recharts";
 import "../styles/dashboard.css";
+import "../styles/UserDashboard.css";
 
 /* =========================
    DATA SOURCE
@@ -22,16 +23,9 @@ const COLORS = {
     red: "#ef4444",
     orange: "#f59e0b",
     green: "#22c55e",
-    blue: "#1e90ff",
-    gray: "#e5e7eb"
+    blue: "#3b82f6",
+    purple: "#8b5cf6"
 };
-
-/* Donut colors for violations */
-const VIOLATION_COLORS = [
-    COLORS.red,
-    COLORS.orange,
-    COLORS.blue
-];
 
 /* =========================
    CREDIT SCORE GAUGE
@@ -40,7 +34,7 @@ const CreditScoreGauge = ({ score }) => {
     const MIN = 300;
     const MAX = 850;
 
-    const safeScore = Math.min(Math.max(score, MIN), MAX);
+    const safeScore = Math.min(Math.max(score ?? 0, MIN), MAX);
     const percent = (safeScore - MIN) / (MAX - MIN);
     const needleAngle = -90 + percent * 180;
 
@@ -51,7 +45,7 @@ const CreditScoreGauge = ({ score }) => {
     ];
 
     return (
-        <div style={{ position: "relative", height: 260 }}>
+        <div className="gauge-wrapper">
             <ResponsiveContainer>
                 <PieChart>
                     <Pie
@@ -70,44 +64,15 @@ const CreditScoreGauge = ({ score }) => {
                 </PieChart>
             </ResponsiveContainer>
 
-            {/* Needle */}
             <div
-                style={{
-                    position: "absolute",
-                    bottom: 128,
-                    left: "50%",
-                    width: 4,
-                    height: 80,
-                    background: "black",
-                    transformOrigin: "bottom center",
-                    transform: `translateX(-50%) rotate(${needleAngle}deg)`,
-                    transition: "transform 1s ease-out"
-                }}
+                className="gauge-needle"
+                style={{ transform: `translateX(-50%) rotate(${needleAngle}deg)` }}
             />
+            <div className="gauge-center" />
 
-            <div
-                style={{
-                    position: "absolute",
-                    bottom: 120,
-                    left: "50%",
-                    width: 14,
-                    height: 14,
-                    background: "black",
-                    borderRadius: "50%",
-                    transform: "translateX(-50%)"
-                }}
-            />
-
-            <div
-                style={{
-                    position: "absolute",
-                    bottom: 30,
-                    width: "100%",
-                    textAlign: "center"
-                }}
-            >
+            <div className="gauge-score">
                 <h2>{safeScore}</h2>
-                <p style={{ color: "#6b7280" }}>Credit Score</p>
+                <p>Credit Score</p>
             </div>
         </div>
     );
@@ -119,215 +84,147 @@ const CreditScoreGauge = ({ score }) => {
 const UserDashboard = () => {
     const navigate = useNavigate();
     const { id: paramId } = useParams();
-
     const [users, setUsers] = useState([]);
 
-    /* =========================
-       AUTH GUARD
-    ========================= */
+    /* AUTH GUARD */
     useEffect(() => {
-        const isAuth = localStorage.getItem("auth") === "true";
-        const role = localStorage.getItem("role");
-
-        if (!isAuth || role !== "user") {
+        if (
+            localStorage.getItem("auth") !== "true" ||
+            localStorage.getItem("role") !== "user"
+        ) {
             navigate("/login", { replace: true });
         }
-    }, []);
+    }, [navigate]);
 
-    /* =========================
-       USER ID RESOLUTION
-    ========================= */
-    const userId = paramId || localStorage.getItem("dbId");
+    /* USER ID */
+    const userId = useMemo(
+        () => paramId || localStorage.getItem("dbId"),
+        [paramId]
+    );
 
-    /* =========================
-       FETCH USERS
-    ========================= */
+    /* FETCH DATA */
     useEffect(() => {
         fetch(DATA_URL)
             .then(res => res.json())
             .then(data => setUsers(data.applications || []))
-            .catch(err => console.error("FETCH ERROR:", err));
+            .catch(console.error);
     }, []);
 
-    /* =========================
-       SELECT USER
-    ========================= */
+    /* SELECT USER */
     const selectedUser = useMemo(() => {
         if (!users.length || !userId) return null;
         return users.find(u => String(u.id) === String(userId));
     }, [users, userId]);
 
-    const isLoading = !selectedUser;
+    /* APPROVAL STATUS – SAFE */
+    const approvalStatus = useMemo(() => {
+        if (!selectedUser) return "Pending";
+        return (
+            selectedUser.approval_status ||
+            selectedUser.Approval_Status ||
+            selectedUser.policy_status ||
+            "Pending"
+        );
+    }, [selectedUser]);
 
-    /* =========================
-       SAFE VALUES
-    ========================= */
-    const creditScore = selectedUser?.credit_score ?? 0;
-    const vehicleType = selectedUser?.vehicle_type ?? "-";
-    const annualMileage = selectedUser?.annual_mileage ?? 0;
-
-    const riskLevel =
-        creditScore >= 700 ? "LOW RISK" :
-        creditScore >= 550 ? "MEDIUM RISK" :
-        "HIGH RISK";
-
-    const riskColor =
-        creditScore >= 700 ? COLORS.green :
-        creditScore >= 550 ? COLORS.orange :
-        COLORS.red;
-
-    /* =========================
-       DRIVING VIOLATIONS (DONUT)
-    ========================= */
-    const violationData = [
-        { name: "DUIs", value: selectedUser?.duis ?? 0 },
-        { name: "Accidents", value: selectedUser?.past_accidents ?? 0 },
-        { name: "Speeding", value: selectedUser?.speeding_violations ?? 0 }
-    ];
-
-    /* =========================
-       MILEAGE DISTRIBUTION
-    ========================= */
-    const mileageDistribution = useMemo(() => {
-        const dist = { Low: 0, Medium: 0, High: 0 };
-
+    /* AVG MILEAGE BY VEHICLE YEAR */
+    const avgMileageByYear = useMemo(() => {
+        const map = {};
         users.forEach(u => {
-            const miles = u.annual_mileage || 0;
-            if (miles < 8000) dist.Low++;
-            else if (miles <= 15000) dist.Medium++;
-            else dist.High++;
+            if (!map[u.vehicle_year]) {
+                map[u.vehicle_year] = { total: 0, count: 0 };
+            }
+            map[u.vehicle_year].total += u.annual_mileage || 0;
+            map[u.vehicle_year].count++;
         });
 
-        return [
-            { name: "Low", value: dist.Low },
-            { name: "Medium", value: dist.Medium },
-            { name: "High", value: dist.High }
-        ];
+        return Object.keys(map).map(year => ({
+            name: year,
+            value: Math.round(map[year].total / map[year].count)
+        }));
     }, [users]);
 
+    if (!selectedUser) {
+        return <p className="loading-text">Loading user profile…</p>;
+    }
+
     return (
-        <div className="dashboard-page">
+        <div className="dashboard-page fade-in">
             <div className="dashboard-header">
-                <h2>User Risk & Insurance Profile</h2>
+                <h2>User Risk Profile</h2>
                 <p>User ID: <b>{userId}</b></p>
             </div>
 
-            {isLoading ? (
-                <p style={{ textAlign: "center" }}>Loading user data...</p>
-            ) : (
-                <>
-                    {/* KPI CARDS */}
-                    <div className="kpi-grid">
-                        <div className="kpi-card">
-                            <span>VEHICLE TYPE</span>
-                            <h3>{vehicleType}</h3>
-                        </div>
+            {/* KPI STRIP */}
+            <div className="kpi-grid">
+                <div className="kpi-card gradient-red">
+                    <span>RISK CATEGORY</span>
+                    <h3>{selectedUser.risk_category}</h3>
+                </div>
 
-                        <div className="kpi-card success">
-                            <span>ANNUAL MILEAGE</span>
-                            <h3>{(annualMileage / 1000).toFixed(2)}K</h3>
-                        </div>
+                {/* SINGLE LINE VIOLATIONS */}
+                <div className="kpi-card gradient-blue violation-strip">
+                    <div>🚔 <b>DUIs:</b> {selectedUser.duis}</div>
+                    <div>💥 <b>Past Accidents:</b> {selectedUser.past_accidents}</div>
+                    <div>🚗 <b>Speeding:</b> {selectedUser.speeding_violations}</div>
+                </div>
 
-                        <div className="kpi-card">
-                            <span>CREDIT SCORE</span>
-                            <h3>{creditScore}</h3>
-                        </div>
+                <div
+                    className={`kpi-card ${approvalStatus === "Approved"
+                            ? "gradient-green"
+                            : "gradient-red"
+                        }`}
+                >
+                    <span>APPROVAL STATUS</span>
+                    <h3>{approvalStatus}</h3>
+                </div>
+            </div>
 
-                        <div
-                            className="kpi-card"
-                            style={{ borderTop: `4px solid ${riskColor}` }}
-                        >
-                            <span>RISK LEVEL</span>
-                            <h3 style={{ color: riskColor }}>
-                                {riskLevel}
-                            </h3>
-                        </div>
-                    </div>
+            {/* USER PROFILE TABLE */}
+            <div className="card">
+                <h5>User Profile Details</h5>
+                <table className="profile-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Vehicle Year</th>
+                            <th>Vehicle Type</th>
+                            <th>Accident Risk</th>
+                            <th>Risk Category</th>
+                            <th>Past Accidents</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{selectedUser.id}</td>
+                            <td>{selectedUser.vehicle_year}</td>
+                            <td>{selectedUser.vehicle_type}</td>
+                            <td>{selectedUser.accident_risk}</td>
+                            <td>{selectedUser.risk_category}</td>
+                            <td>{selectedUser.past_accidents}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                    {/* CHARTS ROW */}
-                    <div className="kpi-grid">
-                        <div className="kpi-card">
-                            <h5>Credit Score Health</h5>
-                            <CreditScoreGauge score={creditScore} />
-                        </div>
+            {/* CREDIT SCORE */}
+            <div className="card">
+                <h5>Credit Score Health</h5>
+                <CreditScoreGauge score={selectedUser.credit_score} />
+            </div>
 
-                        {/* DONUT CHART */}
-                        <div className="kpi-card">
-                            <h5>Driving Violations</h5>
-
-                            <ResponsiveContainer width="100%" height={260}>
-                                <PieChart>
-                                    <Pie
-                                        data={violationData}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        innerRadius={60}
-                                        outerRadius={100}
-                                        paddingAngle={3}
-                                    >
-                                        {violationData.map((_, index) => (
-                                            <Cell
-                                                key={index}
-                                                fill={VIOLATION_COLORS[index % VIOLATION_COLORS.length]}
-                                            />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
-
-                            {/* Legend */}
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    gap: 16,
-                                    marginTop: 8
-                                }}
-                            >
-                                {violationData.map((v, i) => (
-                                    <div
-                                        key={i}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 6
-                                        }}
-                                    >
-                                        <span
-                                            style={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: "50%",
-                                                background: VIOLATION_COLORS[i]
-                                            }}
-                                        />
-                                        <span style={{ fontSize: "0.8rem" }}>
-                                            {v.name}: {v.value}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-
-                    {/* MILEAGE DISTRIBUTION */}
-                    <div className="chart-row">
-                        <div className="chart-card">
-                            <h5>Annual Mileage Distribution</h5>
-                            <ResponsiveContainer width="100%" height={260}>
-                                <BarChart data={mileageDistribution}>
-                                    <XAxis dataKey="name" />
-                                    <YAxis allowDecimals={false} />
-                                    <Tooltip />
-                                    <Bar dataKey="value" fill={COLORS.blue} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-                </>
-            )}
+            {/* CHART */}
+            <div className="card">
+                <h5>Average Annual Mileage by Vehicle Year</h5>
+                <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={avgMileageByYear}>
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="value" fill={COLORS.blue} radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 };

@@ -28,7 +28,7 @@ function App() {
         {/* <Route path="/signup" element={<Signup />} /> */}
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        <Route path="/user-dashboard/:id" element={<UserDashboard />} />
+        <Route path="/user-dashboard" element={<UserDashboard />} />
 
         {/* ================= FALLBACK ================= */}
         <Route path="*" element={<Navigate to="/" />} />
