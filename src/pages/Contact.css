@@ -1,0 +1,119 @@
+/* ===================================================== */
+/* CONTACT PAGE BACKGROUND */
+/* ===================================================== */
+.contact-page {
+    background: linear-gradient(135deg, #0b2035, #122d46, #163c58);
+    font-family: "Poppins", sans-serif;
+    color: #e6eef5;
+}
+
+/* ===================================================== */
+/* HEADER */
+/* ===================================================== */
+.contact-title {
+    color: #4cb2ff;
+    letter-spacing: 0.5px;
+    animation: fadeSlide 1s ease forwards;
+}
+
+.contact-subtitle {
+    color: #cfdbe8;
+    max-width: 650px;
+    margin: auto;
+}
+
+/* ===================================================== */
+/* FRAMES */
+/* ===================================================== */
+.contact-frame {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    height: 100%;
+    transition: all 0.35s ease;
+}
+
+.contact-frame:hover {
+    background: rgba(76, 178, 255, 0.2);
+    transform: translateY(-6px);
+    border-color: rgba(76, 178, 255, 0.8);
+}
+
+.contact-frame h5 {
+    color: #3fd1a0;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.contact-frame p {
+    color: #cfdbe8;
+    line-height: 1.6;
+}
+
+/* ===================================================== */
+/* FORM */
+/* ===================================================== */
+.contact-frame label {
+    color: #e6eef5;
+    font-weight: 500;
+}
+
+.contact-frame .form-control {
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid #777777;
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
+}
+
+.contact-frame .form-control::placeholder {
+    color: #c0c0c0;
+}
+
+.contact-frame .form-control:focus {
+    outline: none;
+    border-color: #00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+    background-color: #050505;
+}
+
+/* ===================================================== */
+/* MAP */
+/* ===================================================== */
+.map-container iframe {
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+/* ===================================================== */
+/* BUTTON */
+/* ===================================================== */
+.btn-success {
+    background: linear-gradient(135deg, #00ffcc, #00c6a2);
+    border: none;
+    color: #000;
+    font-weight: 700;
+}
+
+.btn-success:hover {
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+    transform: translateY(-2px);
+}
+
+/* ===================================================== */
+/* ANIMATION */
+/* ===================================================== */
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

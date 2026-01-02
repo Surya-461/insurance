@@ -1,0 +1,305 @@
+/* ===================================================== */
+/* RESET */
+/* ===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ===================================================== */
+/* MAIN PAGE BACKGROUND – MULTI COLOR ANIMATION */
+/* ===================================================== */
+.home-page {
+    min-height: 100vh;
+    background: linear-gradient(270deg,
+            #020024,
+            #090979,
+            #00d4ff,
+            #00ffcc,
+            #6a11cb,
+            #2575fc);
+    background-size: 1200% 1200%;
+    animation: gradientShift 20s ease infinite;
+    color: #ffffff;
+}
+
+/* ===================================================== */
+/* GLOBAL TEXT */
+/* ===================================================== */
+.home-page p,
+.home-page li {
+    color: #eaeaea;
+}
+
+.home-page h1,
+.home-page h2,
+.home-page h3,
+.home-page h4,
+.home-page h5 {
+    color: #ffffff;
+}
+
+.home-tagline {
+    color: #00ffcc;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+/* ===================================================== */
+/* HERO SECTION – INSURANCE ANALYTICS */
+/* ===================================================== */
+.home-hero-section {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)),
+        url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1800&q=80") center / cover no-repeat;
+}
+
+.home-hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+}
+
+.home-hero-highlight {
+    color: #00ffcc;
+    text-shadow: 0 0 25px rgba(0, 255, 204, 0.6);
+}
+
+.home-hero-desc {
+    font-size: 1.05rem;
+    opacity: 0.9;
+}
+
+/* ===================================================== */
+/* ORBIT ANIMATION */
+/* ===================================================== */
+.home-hero-orbit {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: auto;
+}
+
+.home-hero-orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed rgba(0, 255, 204, 0.5);
+    animation: rotate 14s linear infinite;
+}
+
+.ring-1 {
+    width: 220px;
+    height: 220px;
+}
+
+.ring-2 {
+    width: 160px;
+    height: 160px;
+    top: 30px;
+    left: 30px;
+    animation-direction: reverse;
+}
+
+.home-hero-orbit-core {
+    width: 120px;
+    height: 120px;
+    background: rgba(0, 255, 204, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    box-shadow: 0 0 35px rgba(0, 255, 204, 0.6);
+}
+
+.home-hero-orbit-core span {
+    color: #00ffcc;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ===================================================== */
+/* BUTTONS */
+/* ===================================================== */
+.btn-success {
+    background: linear-gradient(135deg, #00ffcc, #00c6a2);
+    border: none;
+    color: #000;
+    font-weight: 700;
+}
+
+.btn-success:hover {
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+    transform: translateY(-2px);
+}
+
+.btn-outline-light:hover {
+    background-color: #00ffcc;
+    color: #000;
+    border-color: #00ffcc;
+}
+
+/* ===================================================== */
+/* ANALYTICS MODULES SECTION */
+/* ===================================================== */
+.home-modules-section {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
+        url("https://images.unsplash.com/photo-1531497865149-8b0e7bf7cf10?auto=format&fit=crop&w=1800&q=80") center / cover no-repeat;
+    padding: 80px 0;
+}
+
+/* ===================================================== */
+/* MODULE CARDS */
+/* ===================================================== */
+.home-module-card {
+    height: 320px;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.home-module-card:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 0 40px rgba(0, 255, 204, 0.35);
+}
+
+.home-module-card .overlay {
+    background: rgba(0, 0, 0, 0.75);
+    height: 100%;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* ===================================================== */
+/* MODULE BACKGROUND IMAGES – UNSPLASH */
+/* ===================================================== */
+.bg-claims {
+    background: url("https://images.unsplash.com/photo-1605902711622-cfb43c4437d1?auto=format&fit=crop&w=900&q=60") center / cover no-repeat;
+}
+
+.bg-fraud {
+    background: url("https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=900&q=60") center / cover no-repeat;
+}
+
+.bg-settlement {
+    background: url("https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=900&q=60") center / cover no-repeat;
+}
+
+.bg-region {
+    background: url("https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=900&q=60") center / cover no-repeat;
+}
+
+.bg-risk {
+    background: url("https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=900&q=60") center / cover no-repeat;
+}
+
+.bg-forecast {
+    background: url("https://images.unsplash.com/photo-1556155092-8707de31f9c4?auto=format&fit=crop&w=900&q=60") center / cover no-repeat;
+}
+
+/* ===================================================== */
+/* DEMO / FORM SECTION */
+/* ===================================================== */
+.home-demo-section {
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.9)),
+        url("https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1800&q=80") center / cover no-repeat;
+    padding: 80px 0;
+}
+
+.home-form-card {
+    background: rgba(0, 0, 0, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 40px rgba(0, 255, 204, 0.35);
+}
+
+/* ===================================================== */
+/* ANIMATIONS */
+/* ===================================================== */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    25% {
+        background-position: 50% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    75% {
+        background-position: 50% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ===================================================== */
+/* RESPONSIVE */
+/* ===================================================== */
+@media (max-width: 768px) {
+    .home-hero-title {
+        font-size: 2.2rem;
+    }
+
+    .home-module-card {
+        height: 300px;
+    }
+}
+
+/* ================= HERO STATS ================= */
+
+.home-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.stat-item h3 {
+    color: #00ffcc;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stat-item p {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-stats {
+        gap: 24px;
+    }
+}

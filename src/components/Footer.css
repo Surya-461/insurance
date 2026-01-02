@@ -1,0 +1,95 @@
+/* ===================================================== */
+/* FOOTER BACKGROUND */
+/* ===================================================== */
+.footer-wrapper {
+    background: linear-gradient(135deg, #0b2035, #122d46, #163c58);
+    color: #e6eef5;
+    font-family: "Poppins", sans-serif;
+}
+
+/* ===================================================== */
+/* TITLES */
+/* ===================================================== */
+.footer-title {
+    font-weight: 700;
+    color: #00ffcc;
+    letter-spacing: 0.5px;
+}
+
+.footer-subtitle {
+    font-weight: 600;
+    color: #4cb2ff;
+    margin-bottom: 10px;
+}
+
+/* ===================================================== */
+/* TEXT */
+/* ===================================================== */
+.footer-text {
+    color: #cfdbe8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.footer-contact {
+    font-size: 0.85rem;
+    color: #cfdbe8;
+    margin-bottom: 6px;
+}
+
+/* ===================================================== */
+/* LINKS */
+/* ===================================================== */
+.footer-links {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-links li {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    cursor: pointer;
+    color: #cfdbe8;
+    transition: all 0.3s ease;
+}
+
+.footer-links li:hover {
+    color: #00ffcc;
+    transform: translateX(6px);
+}
+
+/* ===================================================== */
+/* DIVIDER */
+/* ===================================================== */
+.footer-divider {
+    border-color: rgba(255, 255, 255, 0.15);
+    margin: 16px 0;
+}
+
+/* ===================================================== */
+/* BOTTOM */
+/* ===================================================== */
+.footer-bottom {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #b8c8d8;
+    padding-bottom: 16px;
+}
+
+
+/* Footer NavLink styling */
+.footer-link {
+    color: #cfdbe8;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #00ffcc;
+    transform: translateX(6px);
+}
+
+.footer-link.active {
+    color: #00ffcc;
+    font-weight: 600;
+}
