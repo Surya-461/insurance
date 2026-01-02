@@ -106,8 +106,6 @@
     font-size: 38px;
     font-weight: 900;
     letter-spacing: 0.6px;
-    background-clip: text;
-    -webkit-background-clip: text;
     color: transparent;
     transition: transform .3s ease, filter .3s ease;
 }
