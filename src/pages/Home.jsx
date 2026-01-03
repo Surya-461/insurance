@@ -158,7 +158,7 @@ const Home = () => {
                                                 window.open(item.link, "_blank");
                                             }}
                                         >
-                                            View Dashboard →
+                                            View Details →
                                         </button>
                                     </div>
                                 </div>
@@ -191,9 +191,9 @@ const Home = () => {
                             <div className="home-form-card">
                                 <h5>Demo Request Form</h5>
 
-                                <input className="form-control" placeholder="Full Name" />
-                                <input className="form-control" placeholder="Official Email" />
-                                <input className="form-control" placeholder="Insurance Company Name" />
+                                <input className="form-control" placeholder="Full Name" required/>
+                                <input className="form-control" placeholder="Official Email" required/>
+                                <input className="form-control" placeholder="Insurance Company Name" required/>
 
                                 <select className="form-control">
                                     <option>Select Role</option>
@@ -208,7 +208,10 @@ const Home = () => {
                                     placeholder="What insights are you looking for?"
                                 />
 
-                                <button className="btn btn-success w-100">
+                                <button
+                                    className="btn btn-success w-100"
+                                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                                >
                                     Request Demo
                                 </button>
                             </div>

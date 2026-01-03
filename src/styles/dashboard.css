@@ -140,3 +140,50 @@
     color: #000000 !important;
     border: 1px solid #000000;
 }
+
+/* ===============================
+   SINGLE LINE FILTER BAR
+================================ */
+
+.filter-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Inline row */
+.filter-row-inline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    /* responsive */
+}
+
+/* Checkbox style */
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Inline dropdowns */
+.filter-select-inline {
+    min-width: 170px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+/* Focus */
+.filter-select-inline:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
