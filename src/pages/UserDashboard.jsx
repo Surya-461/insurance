@@ -190,7 +190,7 @@ const UserDashboard = () => {
                             <th>Vehicle Year</th>
                             <th>Vehicle Type</th>
                             <th>Accident Risk</th>
-                            <th>Risk Category</th>
+                            <th>Risk Profile</th>
                             <th>Past Accidents</th>
                         </tr>
                     </thead>

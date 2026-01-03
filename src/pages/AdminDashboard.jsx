@@ -503,7 +503,7 @@ const AdminDashboard = () => {
                             <th>ID</th>
                             <th>Credit</th>
                             <th>Vehicle</th>
-                            <th>Risk</th>
+                            <th>Risk Profile</th>
                             <th>Status</th>
                         </tr>
                     </thead>
