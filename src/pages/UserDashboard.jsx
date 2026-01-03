@@ -5,7 +5,7 @@ import {
     XAxis, YAxis,
     Tooltip,
     ResponsiveContainer,
-    PieChart, Pie, Cell
+    PieChart, Pie, Cell, Legend
 } from "recharts";
 import "../styles/dashboard.css";
 import "../styles/UserDashboard.css";
@@ -127,22 +127,35 @@ const UserDashboard = () => {
         );
     }, [selectedUser]);
 
-    /* AVG MILEAGE BY VEHICLE YEAR */
-    const avgMileageByYear = useMemo(() => {
-        const map = {};
-        users.forEach(u => {
-            if (!map[u.vehicle_year]) {
-                map[u.vehicle_year] = { total: 0, count: 0 };
-            }
-            map[u.vehicle_year].total += u.annual_mileage || 0;
-            map[u.vehicle_year].count++;
-        });
+    const avgMileageByTypeYear = useMemo(() => {
+        if (!selectedUser) return [];
 
-        return Object.keys(map).map(year => ({
-            name: year,
-            value: Math.round(map[year].total / map[year].count)
-        }));
-    }, [users]);
+        const normalizeType = (type) => {
+            if (!type) return null;
+            const t = type.toLowerCase().replace(/\s+/g, "");
+            if (t === "sedan") return "Sedan";
+            if (t === "sportscar" || t === "sports_car") return "SportsCar";
+            return null;
+        };
+
+        const yearLabel =
+            Number(selectedUser.vehicle_year) >= 2015
+                ? "After 2015"
+                : "Before 2015";
+
+        const vehicleType = normalizeType(selectedUser.vehicle_type);
+        const mileage = Number(selectedUser.annual_mileage);
+
+        if (!vehicleType || isNaN(mileage)) return [];
+
+        return [
+            {
+                year: yearLabel,
+                [vehicleType]: mileage
+            }
+        ];
+    }, [selectedUser]);
+
 
     if (!selectedUser) {
         return <p className="loading-text">Loading user profile…</p>;
@@ -215,16 +228,25 @@ const UserDashboard = () => {
 
             {/* CHART */}
             <div className="card">
-                <h5>Average Annual Mileage by Vehicle Year</h5>
+                <h5>Average Annual Mileage by Vehicle Type & Year</h5>
+
                 <ResponsiveContainer width="100%" height={260}>
-                    <BarChart data={avgMileageByYear}>
-                        <XAxis dataKey="name" />
+                    <BarChart
+                        data={avgMileageByTypeYear}
+                        margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
+                    >
+                        <XAxis dataKey="year" />
                         <YAxis />
                         <Tooltip />
-                        <Bar dataKey="value" fill={COLORS.blue} radius={[6, 6, 0, 0]} />
+                        <Legend />
+
+                        <Bar dataKey="Sedan" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="SportsCar" fill="#ef4444" radius={[6, 6, 0, 0]} />
                     </BarChart>
                 </ResponsiveContainer>
+
             </div>
+
         </div>
     );
 };
